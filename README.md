@@ -1,5 +1,14 @@
 # ProjectGo
-
+url API:http://localhost:3000/recommended
+Body của api có định dạng như sau:
+Id 10
+latitude  5.108851
+longitude 97.578896
+distance  10.0
+ageStart  10
+ageEnd  40
+gender  M
+ignore_array  [1,4,10,19]
 Giải pháp thực hiện để đảm bảo data recommended trả về không chứa users đã bị ignore khi độ lớn của ignore_aray này tăng lên
 -> Giải pháp:
 Cách 1: Sử dụng kỹ thuật worker & go routines trong golang
