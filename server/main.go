@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
@@ -149,9 +150,11 @@ func Index(c *gin.Context){
 	yearBeginAndEnd:=[2]int{caculateAge(rs.AgeRange[0]),caculateAge(rs.AgeRange[1])}
 	dateEndValue := time.Date( yearBeginAndEnd[0],1,1, 12, 30, 0, 0, time.UTC)
 	dateBeginValue := time.Date(yearBeginAndEnd[1],12,30, 12, 30, 0, 0, time.UTC)
+	fmt.Println(dateEndValue,dateBeginValue)
 	selDB, err := db.Query("SELECT * FROM users where NOT users.user_id =? AND users.gender=?" +
-		" AND users.birthday >=? AND users.birthday<=?",rs.Id,rs.Gender,
-		dateBeginValue.Format("2006-01-02"),dateEndValue.Format("2006-01-02"))
+		" AND users.birthday >=? AND users.birthday<=? " +
+		"AND ST_Distance_Sphere(point(users.longtitude,users.latitude),point(?,?))<=?",rs.Id,rs.Gender,
+		dateBeginValue.Format("2006-01-02"),dateEndValue.Format("2006-01-02"),rs.Longitude,rs.Latitude,rs.Distance)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -163,9 +166,9 @@ func Index(c *gin.Context){
 			panic(err.Error())
 		}
 		checkID :=binarySearch(user.Id,rs.IgnoreArray)
-		checkDis := filterBaseOnDis(distance(rs.Latitude,user.Latitude,rs.Longitude,user.Longitude),rs.Distance)
+		//checkDis := filterBaseOnDis(distance(rs.Latitude,user.Latitude,rs.Longitude,user.Longitude),rs.Distance)
 		//fmt.Printf("%.2f \t",distance(rs.Latitude,user.Latitude,rs.Longitude,user.Longitude))
-		if checkID == true || checkDis ==false{
+		if checkID == true{
 			continue
 		}
 
