@@ -66,6 +66,19 @@ func distance(la1,la2,lon1,lon2 float32) float32 {
 	d :=R*c
 	return float32(d)
 }
+// remove at index
+func RemoveIndex(s []User, index int) []User {
+	ret := make([]User, 0)
+	ret = append(ret, s[:index]...)
+	return append(ret, s[index+1:]...)
+}
+// return true if realDis <= refDis
+func filterBaseOnDis(realDis,refDis float32) bool{
+	if realDis > refDis{
+		return false
+	}
+	return true
+}
 func convertData(c *gin.Context)getRes{
 	id := c.PostForm("Id")
 	latitude := c.PostForm("latitude")
@@ -155,10 +168,13 @@ func Index(c *gin.Context){
 		if err != nil {
 			panic(err.Error())
 		}
-		check :=binarySearch(user.Id,rs.IgnoreArray)
-		if check == true{
+		checkID :=binarySearch(user.Id,rs.IgnoreArray)
+		checkDis := filterBaseOnDis(distance(rs.Latitude,user.Latitude,rs.Longitude,user.Longitude),rs.Distance)
+		//fmt.Printf("%.2f \t",distance(rs.Latitude,user.Latitude,rs.Longitude,user.Longitude))
+		if checkID == true || checkDis ==false{
 			continue
 		}
+
 		res = append(res, user)
 	}
 
