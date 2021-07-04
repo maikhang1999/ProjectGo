@@ -66,12 +66,6 @@ func distance(la1,la2,lon1,lon2 float32) float32 {
 	d :=R*c
 	return float32(d)
 }
-// remove at index
-func RemoveIndex(s []User, index int) []User {
-	ret := make([]User, 0)
-	ret = append(ret, s[:index]...)
-	return append(ret, s[index+1:]...)
-}
 // return true if realDis <= refDis
 func filterBaseOnDis(realDis,refDis float32) bool{
 	if realDis > refDis{
